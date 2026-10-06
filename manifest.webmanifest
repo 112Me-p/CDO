@@ -1,0 +1,9 @@
+{
+  "name": "CDO — Custom Drink Order",
+  "short_name": "CDO",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f0f12",
+  "theme_color": "#0f0f12",
+  "icons": [{"src":"assets/favicon.svg","sizes":"any","type":"image/svg+xml"}]
+}

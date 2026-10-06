@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f0f12" />
+  <meta name="description" content="Custom Drink Order — ออกแบบเครื่องดื่มเฉพาะตัว สร้างสูตร สั่งตาม และ Remix สูตรยอดนิยม" />
+  <title>CDO — Custom Drink Order</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="ambient ambient-a" aria-hidden="true"></div>
+  <div class="ambient ambient-b" aria-hidden="true"></div>
+
+  <header class="topbar" id="topbar">
+    <button class="brand" data-nav="home" aria-label="CDO Home">
+      <span class="brand-mark">C</span>
+      <span class="brand-copy">
+        <strong>CDO</strong>
+        <small>Custom Drink Order</small>
+      </span>
+    </button>
+
+    <nav class="nav-tabs" aria-label="Primary navigation">
+      <button class="nav-tab is-active" data-nav="home">Discover</button>
+      <button class="nav-tab" data-nav="builder">Create</button>
+      <button class="nav-tab" data-nav="recipes">My Recipes</button>
+    </nav>
+
+    <div class="top-actions">
+      <button class="icon-btn" id="soundToggle" aria-label="Toggle sound"><span>◒</span></button>
+      <button class="pill-btn ghost" id="openMyRecipes">Saved <span id="savedCount">0</span></button>
+      <button class="pill-btn primary" data-nav="builder">Create a drink</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="page is-active" id="page-home" data-page="home">
+      <div class="hero-shell">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="live-dot"></span> Your drink, built by you</div>
+          <h1>Don’t choose a menu.<br><em>Design one.</em></h1>
+          <p>สร้างสูตรเครื่องดื่มของคุณเอง กำหนดส่วนผสม สัดส่วน ลำดับการเท และวิธีผสม แล้วส่งสูตรให้ร้านผลิตต่อได้ทันที</p>
+          <div class="hero-actions">
+            <button class="cta-lg" data-nav="builder">Start building <span>→</span></button>
+            <button class="cta-link" id="scrollTopFive">See today’s top 5</button>
+          </div>
+          <div class="hero-metrics">
+            <div><strong id="metricRecipes">1,248</strong><span>recipes created</span></div>
+            <div><strong id="metricRemixes">3,902</strong><span>remixes</span></div>
+            <div><strong>∞</strong><span>possibilities</span></div>
+          </div>
+        </div>
+
+        <div class="hero-stage hero-stage-photo" aria-label="CDO summer drink collection">
+          <img class="hero-photo" src="assets/hero-summer.jpg" alt="Colorful custom summer drinks with fruit and ice" />
+          <div class="hero-photo-shade" aria-hidden="true"></div>
+          <div class="floating-chip chip-a">REAL INGREDIENTS</div>
+          <div class="floating-chip chip-b">BUILD 100%</div>
+          <div class="hero-label-card">
+            <span>SUMMER DROP · LIVE</span>
+            <strong>Build it your way.</strong>
+            <small>ปรับสูตรให้ครบ 100% แล้วส่งต่อเป็นสูตรผลิตจริง</small>
+          </div>
+        </div>
+      </div>
+
+      <section class="section" id="top-five">
+        <div class="section-head">
+          <div>
+            <span class="kicker">LIVE COMMUNITY MENU</span>
+            <h2>Top 5 drinks right now</h2>
+            <p>สูตรของลูกค้าที่ถูกสั่งซ้ำมากที่สุด — กดสั่งตามต้นฉบับหรือ Remix ให้เป็นเวอร์ชันของคุณเอง</p>
+          </div>
+          <div class="rank-switch" role="group" aria-label="Ranking period">
+            <button class="is-active" data-period="today">Today</button>
+            <button data-period="week">This week</button>
+            <button data-period="all">All time</button>
+          </div>
+        </div>
+
+        <div class="leaderboard" id="leaderboard"></div>
+      </section>
+
+      <section class="section concept-section">
+        <div class="concept-card dark-card">
+          <span>01</span>
+          <h3>Create</h3>
+          <p>เลือกแก้ว ฐาน ส่วนผสม และสัดส่วนแบบ realtime</p>
+        </div>
+        <div class="concept-card pink-card">
+          <span>02</span>
+          <h3>Name</h3>
+          <p>ตั้งชื่อสูตรและให้ระบบสร้าง Formula ID เฉพาะ</p>
+        </div>
+        <div class="concept-card lime-card">
+          <span>03</span>
+          <h3>Publish</h3>
+          <p>เลือก Public เพื่อให้สูตรของคุณมีสิทธิ์ขึ้นอันดับร้าน</p>
+        </div>
+        <div class="concept-card cream-card">
+          <span>04</span>
+          <h3>Remix</h3>
+          <p>คนอื่นสั่งตามหรือแตกแขนงสูตรใหม่จากของคุณได้</p>
+        </div>
+      </section>
+    </section>
+
+    <section class="page" id="page-builder" data-page="builder">
+      <div class="builder-shell">
+        <aside class="ingredient-panel">
+          <div class="panel-head">
+            <span class="step-tag">STEP <strong id="currentStep">01</strong> / 04</span>
+            <h2 id="stepTitle">Choose your base</h2>
+            <p id="stepSubtitle">เริ่มจากฐานเครื่องดื่ม แล้วค่อยสร้างรสชาติในแบบของคุณ</p>
+          </div>
+
+          <div class="step-content is-active" data-step="1">
+            <div class="size-row" id="sizeOptions"></div>
+            <div class="category-label">BASE</div>
+            <div class="ingredient-grid" id="baseGrid"></div>
+          </div>
+
+          <div class="step-content" data-step="2">
+            <div class="builder-toolbar">
+              <div class="category-tabs" id="ingredientTabs"></div>
+              <button class="mini-btn" id="surpriseMe">Surprise me ✦</button>
+            </div>
+            <div class="ingredient-grid tall" id="ingredientGrid"></div>
+          </div>
+
+          <div class="step-content" data-step="3">
+            <div class="composition-status is-ready" id="compositionStatus" aria-live="polite">
+              <div class="composition-copy"><span>รวมส่วนผสม</span><strong id="compositionMessage">ครบ 100% พร้อมไปต่อ</strong></div>
+              <div class="composition-total"><strong id="compositionTotal">100%</strong><small id="compositionDelta">READY</small></div>
+              <div class="composition-track"><i id="compositionBar"></i></div>
+            </div>
+            <div class="mix-list" id="mixList"></div>
+            <div class="mix-controls">
+              <label>
+                <span>Ice</span>
+                <select id="iceLevel">
+                  <option value="0">No ice</option>
+                  <option value="25">Light — 25%</option>
+                  <option value="50" selected>Regular — 50%</option>
+                  <option value="75">Extra — 75%</option>
+                </select>
+              </label>
+              <label>
+                <span>Mix style</span>
+                <select id="mixStyle">
+                  <option value="Layer">Layer</option>
+                  <option value="Stir" selected>Stir</option>
+                  <option value="Shake">Shake</option>
+                  <option value="Blend">Blend</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="step-content" data-step="4">
+            <div class="finish-form">
+              <label>
+                <span>Drink name</span>
+                <input id="drinkName" maxlength="28" placeholder="e.g. Sunset No.7" />
+              </label>
+              <label>
+                <span>Your nickname <small>(optional)</small></span>
+                <input id="creatorName" maxlength="18" placeholder="e.g. P." />
+              </label>
+              <label class="toggle-row">
+                <span>
+                  <strong>Publish to CDO community</strong>
+                  <small>อนุญาตให้คนอื่นค้นหา สั่งตาม และ Remix สูตรนี้</small>
+                </span>
+                <input type="checkbox" id="publicToggle" checked />
+                <i></i>
+              </label>
+              <div class="formula-preview" id="formulaPreview"></div>
+            </div>
+          </div>
+
+          <div class="panel-footer">
+            <button class="back-btn" id="stepBack">← Back</button>
+            <div class="step-dots" id="stepDots"></div>
+            <button class="next-btn" id="stepNext">Next <span>→</span></button>
+          </div>
+        </aside>
+
+        <section class="drink-stage-panel">
+          <div class="stage-topline">
+            <button class="context-chip" id="builderModeChip">NEW RECIPE</button>
+            <div class="stage-actions">
+              <button class="round-btn" id="undoBtn" title="Undo">↶</button>
+              <button class="round-btn" id="redoBtn" title="Redo">↷</button>
+              <button class="round-btn" id="resetBtn" title="Reset">↺</button>
+            </div>
+          </div>
+
+          <div class="drink-workbench">
+            <div class="glass-meta left-meta">
+              <span>FLAVOR</span>
+              <strong id="dominantFlavor">Bright & Fresh</strong>
+            </div>
+            <div class="glass-meta right-meta">
+              <span>TOTAL</span>
+              <strong><b id="totalPercent">100</b>%</strong>
+            </div>
+
+            <div class="drink-glass-wrap" id="glassWrap">
+              <div class="drink-glass" id="drinkGlass">
+                <div class="glass-fill" id="glassFill"></div>
+                <div class="ice-layer" id="iceVisual"></div>
+                <div class="topping-layer" id="toppingVisual"></div>
+                <div class="glass-shine"></div>
+                <div class="measurement-lines"></div>
+              </div>
+              <div class="glass-size-label" id="glassSizeLabel">M · 500 ml</div>
+              <div class="drink-shadow"></div>
+            </div>
+
+            <div class="profile-ring" id="profileRing">
+              <svg viewBox="0 0 120 120" aria-hidden="true">
+                <circle cx="60" cy="60" r="48" class="ring-track" />
+                <circle cx="60" cy="60" r="48" class="ring-value" id="ringValue" />
+              </svg>
+              <div><strong id="balanceScore">82</strong><span>balance</span></div>
+            </div>
+          </div>
+
+          <div class="taste-panel">
+            <div class="taste-head">
+              <span>LIVE FLAVOR PROFILE</span>
+              <strong id="estimatedPrice">฿85</strong>
+            </div>
+            <div class="taste-bars" id="tasteBars"></div>
+          </div>
+        </section>
+
+        <aside class="recipe-panel">
+          <div class="recipe-head">
+            <div>
+              <span>YOUR FORMULA</span>
+              <strong id="recipeId">CDO-PREVIEW</strong>
+            </div>
+            <button class="mini-icon-btn" id="copyFormula" title="Copy formula">⧉</button>
+          </div>
+
+          <div class="recipe-empty" id="recipeEmpty">
+            <div class="empty-orb">+</div>
+            <strong>Your recipe starts here</strong>
+            <p>เลือก Base และส่วนผสมทางซ้าย สูตรจะถูกสร้างแบบ realtime</p>
+          </div>
+
+          <div class="recipe-stack" id="recipeStack"></div>
+
+          <div class="recipe-bottom">
+            <div class="mini-summary">
+              <span>SIZE<strong id="summarySize">M</strong></span>
+              <span>ICE<strong id="summaryIce">50%</strong></span>
+              <span>MIX<strong id="summaryMix">Stir</strong></span>
+            </div>
+            <button class="finish-btn" id="finishButton">Finish my drink <span>✦</span></button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="page" id="page-recipes" data-page="recipes">
+      <div class="saved-shell">
+        <div class="saved-head">
+          <div>
+            <span class="kicker">LOCAL RECIPE LIBRARY</span>
+            <h2>My recipes</h2>
+            <p>สูตรที่บันทึกไว้ในอุปกรณ์นี้ — เปิดกลับมาแก้ สั่งตาม หรือ Remix ได้</p>
+          </div>
+          <button class="pill-btn primary" data-nav="builder">+ New recipe</button>
+        </div>
+        <div class="saved-grid" id="savedGrid"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="recipeModal" aria-hidden="true">
+    <div class="recipe-modal-card">
+      <button class="modal-close" data-close-modal>×</button>
+      <div class="modal-drink-preview" id="modalDrinkPreview"></div>
+      <div class="modal-content">
+        <div class="modal-rank" id="modalRank">#1 Bestseller</div>
+        <h2 id="modalTitle">Sunset No.7</h2>
+        <p id="modalCreator">Created by M.</p>
+        <div class="modal-stats" id="modalStats"></div>
+        <div class="modal-formula" id="modalFormula"></div>
+        <div class="modal-actions">
+          <button class="cta-lg dark" id="orderOriginalBtn">Order original <span>→</span></button>
+          <button class="cta-lg outline" id="remixBtn">Remix this recipe ✦</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="finishModal" aria-hidden="true">
+    <div class="finish-modal-card">
+      <button class="modal-close" data-close-modal>×</button>
+      <div class="celebration" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="finish-visual" id="finishVisual"></div>
+      <span class="kicker">YOUR CUSTOM DRINK IS READY</span>
+      <h2 id="finishTitle">Your drink</h2>
+      <p id="finishCode">CDO-0000</p>
+      <div class="finish-ticket" id="finishTicket"></div>
+      <div class="finish-modal-actions">
+        <button class="pill-btn primary" id="saveRecipeBtn">Save recipe</button>
+        <button class="pill-btn ghost" id="shareRecipeBtn">Share formula</button>
+        <button class="pill-btn ghost" id="newRecipeBtn">Create another</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <template id="leaderCardTemplate">
+    <article class="leader-card">
+      <div class="rank-badge"></div>
+      <div class="rank-move"></div>
+      <div class="leader-photo-wrap">
+        <img class="leader-photo" alt="" loading="lazy" />
+        <div class="leader-photo-shade"></div>
+      </div>
+      <div class="leader-info">
+        <div class="leader-title-row"><h3></h3><span class="trend-badge"></span></div>
+        <p class="recipe-desc"></p>
+        <div class="recipe-tags"></div>
+        <div class="leader-bottom"><span class="order-count"></span><span class="remix-count"></span></div>
+      </div>
+      <div class="leader-actions">
+        <button class="icon-action view-recipe" title="View recipe">↗</button>
+        <button class="order-btn">Order</button>
+        <button class="remix-card-btn">Remix</button>
+      </div>
+    </article>
+  </template>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
